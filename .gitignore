@@ -1,2 +1,4 @@
 firestore.rules
 firestore.indexes.json
+.firebaserc
+.env
