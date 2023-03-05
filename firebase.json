@@ -7,7 +7,8 @@
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint",
       "npm --prefix \"$RESOURCE_DIR\" run build"
-    ]
+    ],
+    "source": "functions"
   },
   "emulators": {
     "functions": {
@@ -18,6 +19,10 @@
     },
     "ui": {
       "enabled": true
-    }
+    },
+    "auth": {
+      "port": 9099
+    },
+    "singleProjectMode": true
   }
 }
