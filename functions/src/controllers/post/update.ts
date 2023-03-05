@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 import { Post } from '../../types/post';
 import { db } from '../../utils/firebase';
 
@@ -10,7 +10,7 @@ export const updatePost = async (
   const post = args.post;
   await postDoc.update({
     ...args.post,
-    updatedAt: admin.firestore.Timestamp.now(),
+    updatedAt: Timestamp.now(),
   });
   return {
     ...post,

@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
 
@@ -7,7 +7,7 @@ export const createPost = async (
   args: { post: Partial<Post> }
 ): Promise<Post> => {
   const { title, content, category, tags, banner, meta, status } = args.post;
-  const now = admin.firestore.Timestamp.now();
+  const now = Timestamp.now();
   const newPost = {
     title,
     content,

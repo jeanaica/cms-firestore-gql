@@ -1,19 +1,23 @@
+import { Timestamp } from 'firebase-admin/firestore';
 import { Post } from '../../types/post';
 import { db } from '../../utils/firebase';
 
 export const deletePost = async (
   _: unknown,
   args: { id: string }
-): Promise<Post | undefined> => {
+): Promise<Partial<Post> | undefined> => {
   const postRef = db.collection('posts').doc(args.id);
+
+  await postRef.update({
+    updatedAt: Timestamp.now(),
+    status: 'ARCHIVED',
+  });
+
   const postDoc = await postRef.get();
-  if (postDoc.exists) {
-    const post = postDoc.data() as Post;
-    await postRef.delete();
-    post.id = postDoc.id;
-    return post;
-  } else {
-    console.log('No such document!');
-    return undefined;
-  }
+  const post = postDoc.data() as Post;
+
+  return {
+    ...post,
+    id: args.id,
+  };
 };
