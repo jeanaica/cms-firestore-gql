@@ -1,5 +1,14 @@
-#import Post from "post.graphql"
+#import Post from "./post/post.graphql"
+#import PostInput from "./post/input.graphql"
+#import PostUpdate from "./post/update.graphql"
 
 type Query {
-  posts: [Post]
+  posts: [Post!]!
+  post(id: ID!): Post!
+}
+
+type Mutation {
+  createPost(post: PostInput!): Post!
+  updatePost(id: ID!, post: PostUpdate): Post!
+  deletePost(id: ID!): Post!
 }

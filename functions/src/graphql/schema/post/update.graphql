@@ -1,0 +1,12 @@
+#import "./post.graphql"
+#import "./input.graphql"
+
+input PostUpdate {
+  title: String
+  content: String
+  category: [CategoryInput]
+  tags: [TagInput]
+  banner: String
+  meta: MetaInput
+  status: PostStatus
+}

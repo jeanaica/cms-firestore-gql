@@ -1,0 +1,43 @@
+scalar Date
+
+type Post {
+  id: ID!
+  title: String!
+  content: String!
+  createdAt: Date!
+  category: [Category]!
+  updatedAt: Date
+  tags: [Tag]
+  banner: String
+  publishedAt: Date
+  scheduledAt: Date
+  meta: Meta!
+  status: PostStatus!
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+type Category {
+  value: String!
+  label: String!
+}
+
+type Tag {
+  value: String!
+  label: String!
+}
+
+type Meta {
+  slug: String!
+  author: String!
+  url: String!
+  publishedAt: Date
+  image: String
+  description: String
+  title: String
+}
