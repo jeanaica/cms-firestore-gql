@@ -1,8 +1,19 @@
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
 
-export const posts = async (): Promise<Post[]> => {
-  const snapshot = await db.collection('posts').get();
+export const posts = async (
+  _: unknown,
+  args: { status: string }
+): Promise<Post[]> => {
+  const collection = db.collection('posts');
+  let snapshot;
+
+  if (args.status) {
+    snapshot = await collection.where('status', '==', args.status).get();
+  } else {
+    snapshot = await collection.get();
+  }
+
   return snapshot.docs.map(
     doc =>
       ({
