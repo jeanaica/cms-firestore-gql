@@ -4,6 +4,10 @@ import { ApolloServer } from 'apollo-server-express';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { Request } from 'firebase-functions/v1';
 import { GraphQLError } from 'graphql';
+import {
+  ApolloServerPluginLandingPageGraphQLPlayground,
+  ApolloServerPluginLandingPageLocalDefault,
+} from 'apollo-server-core';
 
 import resolvers from '../graphql/resolvers/resolvers';
 import { getUserIdFromGraphqlAuth } from './auth';
@@ -39,6 +43,14 @@ async function main(): Promise<
       };
     },
     introspection: process.env.NODE_ENV !== 'production',
+    cache: 'bounded',
+    plugins: [
+      process.env.NODE_ENV === 'production'
+        ? // eslint-disable-next-line new-cap
+          ApolloServerPluginLandingPageGraphQLPlayground()
+        : // eslint-disable-next-line new-cap
+          ApolloServerPluginLandingPageLocalDefault(),
+    ],
   });
   await server.start();
 
