@@ -3,7 +3,7 @@
 #import PostUpdate from "./post/update.graphql"
 
 type Query {
-  posts: [Post!]!
+  posts(status: String): [Post!]!
   post(id: ID!): Post!
 }
 
