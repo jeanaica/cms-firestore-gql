@@ -1,13 +1,9 @@
 import * as functions from 'firebase-functions';
-import express from 'express';
+import authApp from './endpoints/auth';
+import graphqlApp from './endpoints/graphql';
 
-import main from './utils/graphql';
-import { createTokenForDev } from './utils/auth';
+exports.graphql = functions
+  .region('asia-southeast1')
+  .https.onRequest(graphqlApp);
 
-const app = express();
-
-main().then(server => server.applyMiddleware({ app, path: '/', cors: true }));
-
-exports.graphql = functions.region('asia-southeast1').https.onRequest(app);
-
-exports.createTestTokenForUser = functions.https.onRequest(createTokenForDev);
+exports.auth = functions.region('asia-southeast1').https.onRequest(authApp);

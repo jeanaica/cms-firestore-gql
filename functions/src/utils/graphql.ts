@@ -10,7 +10,7 @@ import {
 } from 'apollo-server-core';
 
 import resolvers from '../graphql/resolvers/resolvers';
-import { getUserIdFromGraphqlAuth } from './auth';
+import { getUserIdFromGraphqlAuth } from './token';
 import { db } from './firebase';
 
 async function main(): Promise<
