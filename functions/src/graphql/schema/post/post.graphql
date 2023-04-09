@@ -34,10 +34,13 @@ type Tag {
 
 type Meta {
   slug: String!
-  author: String!
+  title: String!
   url: String!
-  publishedAt: Date
-  image: String
   description: String
-  title: String
+  author: String
+  image: String
+  imageAlt: String
+  publishedAt: Date
+  updatedAt: Date!
+  keywords: [String]
 }

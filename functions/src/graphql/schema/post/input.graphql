@@ -10,6 +10,7 @@ input PostInput {
   banner: String
   meta: MetaInput!
   status: PostStatus!
+  scheduledAt: String
 }
 
 input CategoryInput {
@@ -23,11 +24,12 @@ input TagInput {
 }
 
 input MetaInput {
-  slug: String!
-  author: String!
-  url: String!
-  publishedAt: Date
-  image: String
+  slug: String
+  url: String
   description: String
-  title: String
+  image: String
+  imageAlt: String
+  author: String
+  publishedAt: String
+  updatedAt: String
 }

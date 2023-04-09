@@ -9,7 +9,9 @@ export const posts = async (
   let snapshot;
 
   if (args.status) {
-    snapshot = await collection.where('status', '==', args.status).get();
+    snapshot = await collection
+      .where('status', '==', args.status.toUpperCase())
+      .get();
   } else {
     snapshot = await collection.get();
   }
@@ -26,6 +28,7 @@ export const posts = async (
         archivedAt: doc.data()?.archivedAt?.toMillis(),
         meta: {
           ...doc.data()?.meta,
+          updatedAt: doc.data()?.meta?.updatedAt?.toMillis(),
           publishedAt: doc.data()?.meta?.publishedAt?.toMillis(),
         },
       } as Post)
@@ -51,6 +54,7 @@ export const post = async (
       archivedAt: post?.archivedAt?.toMillis(),
       meta: {
         ...post?.meta,
+        updatedAt: post?.meta?.updatedAt?.toMillis(),
         publishedAt: post?.meta?.publishedAt?.toMillis(),
       },
     } as Post;

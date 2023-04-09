@@ -17,7 +17,7 @@ export interface Post {
   meta: Meta;
 }
 
-enum PostStatus {
+export enum PostStatus {
   'DRAFT',
   'SCHEDULED',
   'PUBLISHED',
@@ -26,12 +26,15 @@ enum PostStatus {
 
 export interface Meta {
   slug: string;
-  author: string;
-  publishedAt: number;
-  url: string;
-  image?: string;
-  description?: string;
   title?: string;
+  url: string;
+  author: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  publishedAt?: number;
+  updatedAt?: number;
+  keywords?: Array<string>;
 }
 
 export interface Option {
@@ -58,10 +61,12 @@ export interface PostAPI {
 
 export interface MetaAPI {
   slug: string;
-  author: string;
-  publishedAt: admin.firestore.Timestamp;
-  url: string;
-  image?: string;
-  description?: string;
   title?: string;
+  url: string;
+  author: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  publishedAt?: admin.firestore.Timestamp;
+  updatedAt?: admin.firestore.Timestamp;
 }

@@ -15,12 +15,14 @@ export async function getUserIdFromGraphqlAuth(
 ): Promise<string | null> {
   try {
     const token = await getAuthToken(request);
+
     if (token === null) {
       return null;
     }
     const payload = await auth.verifyIdToken(token);
+
     return payload.uid;
   } catch (err) {
-    return null;
+    throw Error();
   }
 }
