@@ -1,14 +1,20 @@
 #import Post from "./post/post.graphql"
 #import PostInput from "./post/input.graphql"
 #import PostUpdate from "./post/update.graphql"
+#import Category from "./category/category.graphql"
+#import Tag from "./tag/tag.graphql"
 
 type Query {
+  categories: [Category!]!
   posts(status: String): [Post!]!
   post(id: ID!): Post!
+  tags: [Tag!]!
 }
 
 type Mutation {
   createPost(post: PostInput!): Post!
   updatePost(id: ID!, post: PostUpdate): Post!
   deletePost(id: ID!): Post!
+  createCategory(category: String!): Category
+  createTag(tag: String!): Tag
 }

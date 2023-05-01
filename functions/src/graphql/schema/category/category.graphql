@@ -1,0 +1,4 @@
+type Category {
+  label: String!
+  value: String!
+}
