@@ -10,6 +10,7 @@ export const categories = async (): Promise<Category[]> => {
       id: doc.id,
       label: toTitleCase(doc.id),
       value: doc.id,
+      notRemovable: doc.data().notRemovable,
     }));
   } catch (error: unknown) {
     if (error instanceof Error) {

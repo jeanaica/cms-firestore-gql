@@ -1,4 +1,5 @@
 type Tag {
   label: String!
   value: String!
+  notRemovable: Boolean
 }

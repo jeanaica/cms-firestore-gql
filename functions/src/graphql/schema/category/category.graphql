@@ -1,4 +1,5 @@
 type Category {
   label: String!
   value: String!
+  notRemovable: Boolean
 }

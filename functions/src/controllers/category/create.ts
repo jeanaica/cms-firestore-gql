@@ -21,10 +21,24 @@ export const createCategory = async (
     const existingCategoryRef = categoryRef.doc(args.category);
     const existingCategory = await existingCategoryRef.get();
 
+    const tagRef = db.collection('tags');
+    const existingTagRef = tagRef.doc(args.category);
+    const existingTag = await existingTagRef.get();
+
     if (!existingCategory.exists) {
       await existingCategoryRef.set({
         id: args.category,
+        notRemovable: true,
       });
+
+      if (!existingTag.exists) {
+        await existingTagRef.set({
+          id: args.category,
+          notRemovable: true,
+        });
+      } else {
+        throw new Error('Tag already exists');
+      }
 
       return {
         id: args.category,
