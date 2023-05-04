@@ -17,6 +17,18 @@ export interface Post {
   meta: Meta;
 }
 
+export interface PostInput {
+  title: string;
+  content: string;
+  author: string;
+  banner: string;
+  category: Array<Option>;
+  tags: Array<Option>;
+  scheduledAt?: string;
+  status: PostStatus;
+  meta: Meta;
+}
+
 export enum PostStatus {
   'DRAFT',
   'SCHEDULED',

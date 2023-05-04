@@ -3,6 +3,9 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "storage": {
+    "rules": "storage.rules"
+  },
   "functions": {
     "runtime": "nodejs16",
     "predeploy": [
@@ -24,6 +27,9 @@
     "auth": {
       "port": 9099
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "storage": {
+      "port": 9199
+    }
   }
 }

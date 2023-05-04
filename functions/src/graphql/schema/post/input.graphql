@@ -5,8 +5,8 @@ scalar Date
 input PostInput {
   title: String!
   content: String!
-  category: [CategoryInput]!
-  tags: [TagInput]!
+  category: [CategoryInput]
+  tags: [TagInput]
   banner: String
   meta: MetaInput!
   status: PostStatus!
@@ -16,11 +16,13 @@ input PostInput {
 input CategoryInput {
   value: String!
   label: String!
+  notRemovable: Boolean
 }
 
 input TagInput {
   value: String!
   label: String!
+  notRemovable: Boolean
 }
 
 input MetaInput {

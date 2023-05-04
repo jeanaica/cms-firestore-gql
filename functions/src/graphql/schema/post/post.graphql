@@ -5,7 +5,7 @@ type Post {
   title: String!
   content: String!
   createdAt: Date!
-  category: [Category]!
+  category: [Category]
   updatedAt: Date
   tags: [Tag]
   banner: String
@@ -35,7 +35,7 @@ type Tag {
 type Meta {
   slug: String!
   title: String!
-  url: String!
+  url: String
   description: String
   author: String
   image: String

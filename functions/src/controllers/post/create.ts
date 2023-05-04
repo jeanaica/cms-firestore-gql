@@ -1,26 +1,26 @@
-import { Timestamp } from 'firebase-admin/firestore';
 import { GraphQLError } from 'graphql';
-import { Post, PostAPI, PostStatus } from '../../types/post';
+import { Timestamp } from 'firebase-admin/firestore';
+
+import { Post, PostAPI, PostInput, PostStatus } from '../../types/post';
 import { db } from '../../utils/firebase';
+import toFirebaseTimestamp from '../../utils/toFirebaseTimestamp';
 
 const setPublishedAt = ({
   status,
   value,
-  current,
 }: {
   status?: PostStatus;
-  value?: number;
-  current: Timestamp;
+  value: string | Timestamp;
 }) => {
   switch (status) {
     case PostStatus.DRAFT:
       return null;
 
     case PostStatus.PUBLISHED:
-      return current;
+      return value;
 
     case PostStatus.SCHEDULED:
-      return value;
+      return toFirebaseTimestamp(value as string);
 
     case PostStatus.ARCHIVED:
       return null;
@@ -32,7 +32,7 @@ const setPublishedAt = ({
 
 export const createPost = async (
   _: unknown,
-  args: { post: Partial<Post> },
+  args: { post: Partial<PostInput> },
   { isAuthenticated }: { isAuthenticated: boolean }
 ): Promise<Post> => {
   if (!isAuthenticated) {
@@ -45,11 +45,12 @@ export const createPost = async (
 
   const { title, content, category, tags, banner, meta, status, scheduledAt } =
     args.post;
+
   const now = Timestamp.now();
+
   const publishedTime = setPublishedAt({
     status,
-    value: scheduledAt,
-    current: now,
+    value: scheduledAt ? scheduledAt : now,
   });
   const newPost = {
     title,
@@ -74,6 +75,9 @@ export const createPost = async (
   const post = postDoc.data() as PostAPI;
 
   post.id = postRef.id;
+
+  console.log('post', post);
+
   return {
     ...post,
     createdAt: post?.createdAt?.toMillis(),

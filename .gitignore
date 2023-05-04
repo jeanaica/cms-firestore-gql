@@ -3,3 +3,4 @@ firestore.indexes.json
 .firebaserc
 .env
 functions/src/utils/serviceAccountKey.json
+storage.rules
