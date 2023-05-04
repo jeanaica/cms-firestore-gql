@@ -1,4 +1,6 @@
 import { GraphQLError } from 'graphql';
+import { FieldPath } from 'firebase-admin/firestore';
+
 import { db } from '../../utils/firebase';
 import Category from '../../types/category';
 import toTitleCase from '../../utils/toTitleCase';
@@ -17,23 +19,27 @@ export const createCategory = async (
   }
 
   try {
+    const upperCaseCategory = args.category.toUpperCase();
     const categoryRef = db.collection('categories');
-    const existingCategoryRef = categoryRef.doc(args.category);
-    const existingCategory = await existingCategoryRef.get();
+
+    const existingCategorySnapshot = await categoryRef
+      .where(FieldPath.documentId(), '==', upperCaseCategory)
+      .get();
 
     const tagRef = db.collection('tags');
-    const existingTagRef = tagRef.doc(args.category);
-    const existingTag = await existingTagRef.get();
+    const existingTagSnapshot = await tagRef
+      .where(FieldPath.documentId(), '==', upperCaseCategory)
+      .get();
 
-    if (!existingCategory.exists) {
-      await existingCategoryRef.set({
-        id: args.category,
+    if (existingCategorySnapshot.empty) {
+      await categoryRef.doc(upperCaseCategory).set({
+        id: upperCaseCategory,
         notRemovable: true,
       });
 
-      if (!existingTag.exists) {
-        await existingTagRef.set({
-          id: args.category,
+      if (existingTagSnapshot.empty) {
+        await tagRef.doc(upperCaseCategory).set({
+          id: upperCaseCategory,
           notRemovable: true,
         });
       } else {
@@ -41,9 +47,9 @@ export const createCategory = async (
       }
 
       return {
-        id: args.category,
+        id: upperCaseCategory,
         label: toTitleCase(args.category),
-        value: args.category,
+        value: upperCaseCategory,
       };
     } else {
       throw new Error('Category already exists');

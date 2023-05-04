@@ -1,4 +1,6 @@
 import { GraphQLError } from 'graphql';
+import { FieldPath } from 'firebase-admin/firestore';
+
 import { db } from '../../utils/firebase';
 import Tag from '../../types/tag';
 import toTitleCase from '../../utils/toTitleCase';
@@ -18,18 +20,21 @@ export const createTag = async (
 
   try {
     const tagRef = db.collection('tags');
-    const existingTagRef = tagRef.doc(args.tag);
-    const existingTag = await existingTagRef.get();
+    const upperCaseTag = args.tag.toUpperCase();
 
-    if (!existingTag.exists) {
-      await existingTagRef.set({
-        id: args.tag,
+    const existingTagSnapshot = await tagRef
+      .where(FieldPath.documentId(), '==', upperCaseTag)
+      .get();
+
+    if (existingTagSnapshot.empty) {
+      await tagRef.doc(upperCaseTag).set({
+        id: upperCaseTag,
       });
 
       return {
-        id: args.tag,
+        id: upperCaseTag,
         label: toTitleCase(args.tag),
-        value: args.tag,
+        value: upperCaseTag,
       };
     } else {
       throw new Error('Tag already exists');
