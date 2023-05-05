@@ -1,20 +1,28 @@
+import { OrderByDirection } from 'firebase-admin/firestore';
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
 
 export const posts = async (
   _: unknown,
-  args: { status: string }
+  args: { status: string; sort?: string }
 ): Promise<Post[]> => {
   const collection = db.collection('posts');
-  let snapshot;
+  const sortOrder = (
+    args.sort ? args.sort.toLowerCase() : 'desc'
+  ) as OrderByDirection;
+  let query;
 
+  // Check if a status filter is provided
   if (args.status) {
-    snapshot = await collection
-      .where('status', '==', args.status.toUpperCase())
-      .get();
+    query = collection.where('status', '==', args.status.toUpperCase());
   } else {
-    snapshot = await collection.get();
+    query = collection;
   }
+
+  // Apply sorting based on sortOrder
+  query = query.orderBy('updatedAt', sortOrder);
+
+  const snapshot = await query.get();
 
   return snapshot.docs.map(
     doc =>

@@ -6,7 +6,7 @@
 
 type Query {
   categories: [Category!]!
-  posts(status: String): [Post!]!
+  posts(status: String, sort: String): [Post!]!
   post(id: ID!): Post!
   tags: [Tag!]!
 }
