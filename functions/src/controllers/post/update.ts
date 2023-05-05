@@ -1,6 +1,7 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { GraphQLError } from 'graphql';
-import { Post } from '../../types/post';
+
+import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
 
 export const updatePost = async (
@@ -17,19 +18,41 @@ export const updatePost = async (
   }
 
   const postDoc = db.collection('posts').doc(args.id);
-  const post = args.post;
+  const postData = args.post;
+  const savedPost = (await postDoc.get()).data();
+
+  const meta = {
+    ...savedPost?.meta,
+    ...args.post.meta,
+    publishedAt: savedPost?.publishedAt,
+    title: args.post.title,
+    url: `${process.env.BLOG_URL}/${args.post.meta?.slug}`,
+    keywords: args.post?.tags?.map(tag => tag.value),
+    updatedAt: Timestamp.now(),
+  };
+
   await postDoc.update({
-    ...args.post,
-    meta: {
-      ...args.post.meta,
-      url: `${process.env.BLOG_URL}/${args.post.meta?.slug}`,
-      keywords: args.post?.tags?.map(tag => tag.value),
-      updatedAt: Timestamp.now(),
-    },
+    ...savedPost,
+    ...postData,
+    publishedAt: savedPost?.publishedAt,
+    meta,
     updatedAt: Timestamp.now(),
   });
+
+  const updatedPost = (await postDoc.get()).data() as PostAPI;
+
   return {
-    ...post,
+    ...updatedPost,
     id: args.id,
+    createdAt: updatedPost?.createdAt?.toMillis(),
+    updatedAt: updatedPost?.updatedAt?.toMillis(),
+    publishedAt: updatedPost?.publishedAt?.toMillis(),
+    scheduledAt: updatedPost?.scheduledAt?.toMillis(),
+    archivedAt: updatedPost?.archivedAt?.toMillis(),
+    meta: {
+      ...updatedPost?.meta,
+      updatedAt: updatedPost?.meta?.updatedAt?.toMillis(),
+      publishedAt: updatedPost?.meta?.publishedAt?.toMillis(),
+    },
   };
 };

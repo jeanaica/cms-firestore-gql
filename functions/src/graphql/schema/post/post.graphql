@@ -34,7 +34,7 @@ type Tag {
 
 type Meta {
   slug: String!
-  title: String!
+  title: String
   url: String
   description: String
   author: String

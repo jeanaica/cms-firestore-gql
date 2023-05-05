@@ -9,4 +9,5 @@ input PostUpdate {
   banner: String
   meta: MetaInput
   status: PostStatus
+  scheduledAt: String
 }

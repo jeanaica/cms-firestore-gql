@@ -82,21 +82,21 @@ export const createPost = async (
   };
   const postRef = await db.collection('posts').add(newPost);
   const postDoc = await postRef.get();
-  const post = postDoc.data() as PostAPI;
+  const postData = postDoc.data() as PostAPI;
 
-  post.id = postRef.id;
+  postData.id = postRef.id;
 
   return {
-    ...post,
-    createdAt: post?.createdAt?.toMillis(),
-    updatedAt: post?.updatedAt?.toMillis(),
-    publishedAt: post?.publishedAt?.toMillis(),
-    scheduledAt: post?.scheduledAt?.toMillis(),
-    archivedAt: post?.archivedAt?.toMillis(),
+    ...postData,
+    createdAt: postData?.createdAt?.toMillis(),
+    updatedAt: postData?.updatedAt?.toMillis(),
+    publishedAt: postData?.publishedAt?.toMillis(),
+    scheduledAt: postData?.scheduledAt?.toMillis(),
+    archivedAt: postData?.archivedAt?.toMillis(),
     meta: {
-      ...post?.meta,
-      updatedAt: post?.meta?.updatedAt?.toMillis(),
-      publishedAt: post?.meta?.publishedAt?.toMillis(),
+      ...postData?.meta,
+      updatedAt: postData?.meta?.updatedAt?.toMillis(),
+      publishedAt: postData?.meta?.publishedAt?.toMillis(),
     },
   } as Post;
 };
