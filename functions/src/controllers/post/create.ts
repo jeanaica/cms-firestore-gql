@@ -9,20 +9,20 @@ const setPublishedAt = ({
   status,
   value,
 }: {
-  status?: PostStatus;
+  status: PostStatus;
   value: string | Timestamp;
 }) => {
-  switch (status) {
-    case PostStatus.DRAFT:
+  switch (status.toUpperCase()) {
+    case 'DRAFT':
       return null;
 
-    case PostStatus.PUBLISHED:
+    case 'PUBLISHED':
       return value;
 
-    case PostStatus.SCHEDULED:
+    case 'SCHEDULED':
       return toFirebaseTimestamp(value as string);
 
-    case PostStatus.ARCHIVED:
+    case 'ARCHIVED':
       return null;
 
     default:
@@ -43,8 +43,16 @@ export const createPost = async (
     });
   }
 
-  const { title, content, category, tags, banner, meta, status, scheduledAt } =
-    args.post;
+  const {
+    title,
+    content,
+    category,
+    tags,
+    banner,
+    meta,
+    status = 'DRAFT',
+    scheduledAt,
+  } = args.post;
 
   const now = Timestamp.now();
 
@@ -52,6 +60,7 @@ export const createPost = async (
     status,
     value: scheduledAt ? scheduledAt : now,
   });
+
   const newPost = {
     title,
     content,
@@ -60,6 +69,7 @@ export const createPost = async (
     banner,
     meta: {
       ...meta,
+      url: `${process.env.BLOG_URL}/${meta?.slug}`,
       title,
       keywords: tags?.map(tag => tag.value),
       updatedAt: now,
@@ -75,8 +85,6 @@ export const createPost = async (
   const post = postDoc.data() as PostAPI;
 
   post.id = postRef.id;
-
-  console.log('post', post);
 
   return {
     ...post,

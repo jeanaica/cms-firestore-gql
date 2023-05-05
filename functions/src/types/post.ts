@@ -29,12 +29,7 @@ export interface PostInput {
   meta: Meta;
 }
 
-export enum PostStatus {
-  'DRAFT',
-  'SCHEDULED',
-  'PUBLISHED',
-  'ARCHIVED',
-}
+export type PostStatus = 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
 
 export interface Meta {
   slug: string;
