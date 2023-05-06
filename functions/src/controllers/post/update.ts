@@ -26,7 +26,6 @@ export const updatePost = async (
     ...args.post.meta,
     publishedAt: savedPost?.publishedAt,
     title: args.post.title,
-    url: `${process.env.BLOG_URL}/${args.post.meta?.slug}`,
     keywords: args.post?.tags?.map(tag => tag.value),
     updatedAt: Timestamp.now(),
   };

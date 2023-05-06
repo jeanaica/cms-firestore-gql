@@ -69,7 +69,6 @@ export const createPost = async (
     banner,
     meta: {
       ...meta,
-      url: `${process.env.BLOG_URL}/${meta?.slug}`,
       title,
       keywords: tags?.map(tag => tag.value),
       updatedAt: now,
