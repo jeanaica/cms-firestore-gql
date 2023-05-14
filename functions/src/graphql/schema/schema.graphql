@@ -8,6 +8,7 @@ type Query {
   categories: [Category!]!
   posts(status: String, sort: String): [Post!]!
   post(id: ID!): Post!
+  postSlug(slug: String!): Post!
   tags: [Tag!]!
 }
 

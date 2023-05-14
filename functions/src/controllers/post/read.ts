@@ -71,3 +71,35 @@ export const post = async (
     return undefined;
   }
 };
+
+export const postSlug = async (
+  _: unknown,
+  args: { slug: string }
+): Promise<Post | undefined> => {
+  const postDoc = await db
+    .collection('posts')
+    .where('slug', '==', args.slug)
+    .get();
+
+  if (postDoc.empty) {
+    console.log('No such document!');
+    return undefined;
+  }
+
+  const post = postDoc.docs[0].data() as PostAPI;
+  post.id = postDoc.docs[0].id;
+
+  return {
+    ...post,
+    createdAt: post?.createdAt?.toMillis(),
+    updatedAt: post?.updatedAt?.toMillis(),
+    publishedAt: post?.publishedAt?.toMillis(),
+    scheduledAt: post?.scheduledAt?.toMillis(),
+    archivedAt: post?.archivedAt?.toMillis(),
+    meta: {
+      ...post?.meta,
+      updatedAt: post?.meta?.updatedAt?.toMillis(),
+      publishedAt: post?.meta?.publishedAt?.toMillis(),
+    },
+  } as Post;
+};
