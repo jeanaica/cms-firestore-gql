@@ -2,8 +2,8 @@ scalar Date
 
 type Post {
   id: ID!
-  title: String!
-  content: String!
+  title: String
+  content: String
   createdAt: Date!
   category: [Category]
   updatedAt: Date

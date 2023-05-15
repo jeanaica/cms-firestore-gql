@@ -78,7 +78,7 @@ export const postSlug = async (
 ): Promise<Post | undefined> => {
   const postDoc = await db
     .collection('posts')
-    .where('slug', '==', args.slug)
+    .where('meta.slug', '==', args.slug.toLowerCase())
     .get();
 
   if (postDoc.empty) {
