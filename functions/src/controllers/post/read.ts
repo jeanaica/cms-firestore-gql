@@ -79,6 +79,7 @@ export const postSlug = async (
   const postDoc = await db
     .collection('posts')
     .where('meta.slug', '==', args.slug.toLowerCase())
+    .where('status', '==', 'PUBLISHED')
     .get();
 
   if (postDoc.empty) {

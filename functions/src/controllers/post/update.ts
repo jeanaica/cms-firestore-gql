@@ -1,5 +1,6 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { GraphQLError } from 'graphql';
+import DOMPurify from 'dompurify';
 
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
@@ -20,11 +21,21 @@ export const updatePost = async (
   const postDoc = db.collection('posts').doc(args.id);
   const postData = args.post;
   const savedPost = (await postDoc.get()).data();
+  const publishedTime = savedPost?.publishedAt
+    ? savedPost?.publishedAt
+    : Timestamp.now();
+  let cleanContent = savedPost?.content || '';
+
+  if (args?.post.content) {
+    cleanContent = DOMPurify.sanitize(args?.post.content, {
+      USE_PROFILES: { html: true },
+    });
+  }
 
   const meta = {
     ...savedPost?.meta,
     ...args.post.meta,
-    publishedAt: savedPost?.publishedAt,
+    publishedAt: publishedTime,
     title: args.post.title,
     keywords: args.post?.tags?.map(tag => tag.value),
     updatedAt: Timestamp.now(),
@@ -33,7 +44,8 @@ export const updatePost = async (
   await postDoc.update({
     ...savedPost,
     ...postData,
-    publishedAt: savedPost?.publishedAt,
+    content: cleanContent,
+    publishedAt: publishedTime,
     meta,
     updatedAt: Timestamp.now(),
   });

@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { Timestamp } from 'firebase-admin/firestore';
+import DOMPurify from 'dompurify';
 
 import { Post, PostAPI, PostInput, PostStatus } from '../../types/post';
 import { db } from '../../utils/firebase';
@@ -60,10 +61,17 @@ export const createPost = async (
     status,
     value: scheduledAt ? scheduledAt : now,
   });
+  let cleanContent = '';
+
+  if (content) {
+    cleanContent = DOMPurify.sanitize(content, {
+      USE_PROFILES: { html: true },
+    });
+  }
 
   const newPost = {
     title,
-    content,
+    content: cleanContent,
     category,
     tags,
     banner,
