@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { GraphQLError } from 'graphql';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
