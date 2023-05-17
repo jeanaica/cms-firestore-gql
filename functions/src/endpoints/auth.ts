@@ -26,6 +26,7 @@ authApp.post('/createTestTokenForUser', async (req: Request, res: Response) => {
       refreshToken: authResult.data.refreshToken,
       expiresIn: authResult.data.expiresIn,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.json({
       error: err.message,

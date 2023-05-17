@@ -3,4 +3,6 @@ firestore.indexes.json
 .firebaserc
 .env
 functions/src/utils/serviceAccountKey.json
+functions/src/utils/stagingServiceAccountKey.json
 storage.rules
+.env.staging
