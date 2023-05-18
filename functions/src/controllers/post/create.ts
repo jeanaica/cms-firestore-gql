@@ -87,7 +87,7 @@ export const createPost = async (
     updatedAt: now,
     publishedAt: publishedTime,
   };
-  const postRef = await db.collection('posts').add(newPost);
+  const postRef = await db().collection('posts').add(newPost);
   const postDoc = await postRef.get();
   const postData = postDoc.data() as PostAPI;
 

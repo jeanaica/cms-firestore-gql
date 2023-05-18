@@ -18,7 +18,7 @@ export const updatePost = async (
     });
   }
 
-  const postDoc = db.collection('posts').doc(args.id);
+  const postDoc = db().collection('posts').doc(args.id);
   const postData = args.post;
   const savedPost = (await postDoc.get()).data();
   const publishedTime = savedPost?.publishedAt

@@ -6,7 +6,7 @@ export const posts = async (
   _: unknown,
   args: { status: string; sort?: string }
 ): Promise<Post[]> => {
-  const collection = db.collection('posts');
+  const collection = db().collection('posts');
   const sortOrder = (
     args.sort ? args.sort.toLowerCase() : 'desc'
   ) as OrderByDirection;
@@ -47,7 +47,7 @@ export const post = async (
   _: unknown,
   args: { id: string }
 ): Promise<Post | undefined> => {
-  const postDoc = await db.collection('posts').doc(args.id).get();
+  const postDoc = await db().collection('posts').doc(args.id).get();
 
   const post = postDoc.data() as PostAPI;
   post.id = postDoc.id;
@@ -76,7 +76,7 @@ export const postSlug = async (
   _: unknown,
   args: { slug: string }
 ): Promise<Post | undefined> => {
-  const postDoc = await db
+  const postDoc = await db()
     .collection('posts')
     .where('meta.slug', '==', args.slug.toLowerCase())
     .where('status', '==', 'PUBLISHED')

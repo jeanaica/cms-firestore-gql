@@ -1,18 +1,37 @@
 import * as admin from 'firebase-admin';
-import { ServiceAccount } from 'firebase-admin';
+import * as functions from 'firebase-functions';
+
+import { Auth } from 'firebase-admin/auth';
 import * as serviceAccount from './serviceAccountKey.json';
 import * as stagingServiceAccount from './stagingServiceAccountKey.json';
 
-const selectedServiceAccount =
-  process.env.ENV === 'staging' ? stagingServiceAccount : serviceAccount;
+let dbInstance: admin.firestore.Firestore | null = null;
+let authInstance: Auth | null = null;
 
-// Initialize the Firebase Admin SDK with the service account
-admin.initializeApp({
-  credential: admin.credential.cert(selectedServiceAccount as ServiceAccount),
-  databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
-});
+function getAdmin() {
+  const selectedServiceAccount =
+    functions.config().config.env === 'staging'
+      ? stagingServiceAccount
+      : serviceAccount;
 
-export const db = admin.firestore();
-db.settings({ ignoreUndefinedProperties: true });
+  admin.initializeApp({
+    credential: admin.credential.cert(
+      selectedServiceAccount as admin.ServiceAccount
+    ),
+    databaseURL: `https://${
+      functions.config().config.project_id
+    }.firebaseio.com`,
+  });
 
-export const auth = admin.auth();
+  dbInstance = admin.firestore();
+  authInstance = admin.auth();
+
+  dbInstance.settings({ ignoreUndefinedProperties: true });
+
+  return { db: dbInstance, auth: authInstance };
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const db = () => dbInstance || getAdmin().db;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const auth = () => authInstance || getAdmin().auth;
