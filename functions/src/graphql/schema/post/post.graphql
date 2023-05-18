@@ -9,6 +9,7 @@ type Post {
   updatedAt: Date
   tags: [Tag]
   banner: String
+  caption: String
   publishedAt: Date
   scheduledAt: Date
   meta: Meta!

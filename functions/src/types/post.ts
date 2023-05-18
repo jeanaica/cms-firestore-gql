@@ -8,6 +8,7 @@ export interface Post {
   createdAt: number;
   updatedAt: number;
   banner: string;
+  caption: string;
   category: Array<Option>;
   tags: Array<Option>;
   publishedAt?: number;
@@ -22,6 +23,7 @@ export interface PostInput {
   content: string;
   author: string;
   banner: string;
+  caption: string;
   category: Array<Option>;
   tags: Array<Option>;
   scheduledAt?: string;
@@ -57,6 +59,7 @@ export interface PostAPI {
   createdAt: admin.firestore.Timestamp;
   updatedAt: admin.firestore.Timestamp;
   banner: string;
+  caption: string;
   category: Array<Option>;
   tags: Array<Option>;
   publishedAt?: admin.firestore.Timestamp;
