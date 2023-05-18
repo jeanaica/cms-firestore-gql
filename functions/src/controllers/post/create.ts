@@ -50,6 +50,7 @@ export const createPost = async (
     category,
     tags,
     banner,
+    caption,
     meta,
     status = 'DRAFT',
     scheduledAt,
@@ -75,6 +76,7 @@ export const createPost = async (
     category,
     tags,
     banner,
+    caption,
     meta: {
       ...meta,
       title,
