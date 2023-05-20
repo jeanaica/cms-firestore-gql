@@ -10,9 +10,9 @@ let authInstance: Auth | null = null;
 
 function getAdmin() {
   const selectedServiceAccount =
-    functions.config().config.env === 'staging'
-      ? stagingServiceAccount
-      : serviceAccount;
+    functions.config().config.env === 'production'
+      ? serviceAccount
+      : stagingServiceAccount;
 
   admin.initializeApp({
     credential: admin.credential.cert(
