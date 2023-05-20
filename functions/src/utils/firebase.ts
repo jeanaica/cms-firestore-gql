@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-
 import { Auth } from 'firebase-admin/auth';
+
 import * as serviceAccount from './serviceAccountKey.json';
 import * as stagingServiceAccount from './stagingServiceAccountKey.json';
 

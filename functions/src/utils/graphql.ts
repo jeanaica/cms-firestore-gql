@@ -2,10 +2,11 @@ import { join } from 'node:path';
 import { loadSchema } from '@graphql-tools/load';
 import { ApolloServer } from 'apollo-server-express';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { Request } from 'firebase-functions/v1';
+import { Request, config } from 'firebase-functions/v1';
 import {
-  ApolloServerPluginLandingPageGraphQLPlayground,
   ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageDisabled,
+  ApolloServerPluginLandingPageGraphQLPlayground,
 } from 'apollo-server-core';
 
 import resolvers from '../graphql/resolvers/resolvers';
@@ -34,13 +35,19 @@ async function main(): Promise<
         return { isAuthenticated: false };
       }
     },
-    introspection: process.env.NODE_ENV !== 'production',
+    introspection: config().config.env !== 'production',
     cache: 'bounded',
     plugins: [
-      process.env.NODE_ENV === 'production'
+      // for production environment disable playground
+      config().config.env === 'production'
+        ? // eslint-disable-next-line new-cap
+          ApolloServerPluginLandingPageDisabled()
+        : // for staging environment playground
+        config().config.env === 'staging'
         ? // eslint-disable-next-line new-cap
           ApolloServerPluginLandingPageGraphQLPlayground()
-        : // eslint-disable-next-line new-cap
+        : // for development playground
+          // eslint-disable-next-line new-cap
           ApolloServerPluginLandingPageLocalDefault(),
     ],
   });
