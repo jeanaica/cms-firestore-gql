@@ -29,6 +29,7 @@ export const updatePost = async (
   if (args?.post.content) {
     cleanContent = DOMPurify.sanitize(args?.post.content, {
       USE_PROFILES: { html: true },
+      ADD_ATTR: ['target'],
     });
   }
 
