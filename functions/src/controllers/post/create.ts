@@ -67,6 +67,7 @@ export const createPost = async (
   if (content) {
     cleanContent = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
+      ADD_ATTR: ['target'],
     });
   }
 
