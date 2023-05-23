@@ -1,19 +1,20 @@
 import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export interface Post {
   id: string;
   title: string;
   content: string;
   author: string;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: number | Timestamp | null;
+  updatedAt: number | Timestamp | null;
   banner: string;
   caption: string;
   category: Array<Option>;
   tags: Array<Option>;
-  publishedAt?: number;
-  scheduledAt?: number;
-  archivedAt?: number;
+  publishedAt?: number | Timestamp | null;
+  scheduledAt?: number | Timestamp | null;
+  archivedAt?: number | Timestamp | null;
   status: PostStatus;
   meta: Meta;
 }
@@ -26,7 +27,7 @@ export interface PostInput {
   caption: string;
   category: Array<Option>;
   tags: Array<Option>;
-  scheduledAt?: string;
+  scheduledAt?: string | null;
   status: PostStatus;
   meta: Meta;
 }
@@ -41,8 +42,8 @@ export interface Meta {
   description?: string;
   image?: string;
   imageAlt?: string;
-  publishedAt?: number;
-  updatedAt?: number;
+  publishedAt?: number | Timestamp | null;
+  updatedAt?: number | Timestamp | null;
   keywords?: Array<string>;
 }
 
@@ -56,15 +57,15 @@ export interface PostAPI {
   title: string;
   content: string;
   author: string;
-  createdAt: admin.firestore.Timestamp;
-  updatedAt: admin.firestore.Timestamp;
+  createdAt: admin.firestore.Timestamp | null;
+  updatedAt: admin.firestore.Timestamp | null;
   banner: string;
   caption: string;
   category: Array<Option>;
   tags: Array<Option>;
-  publishedAt?: admin.firestore.Timestamp;
-  scheduledAt?: admin.firestore.Timestamp;
-  archivedAt?: admin.firestore.Timestamp;
+  publishedAt?: admin.firestore.Timestamp | null;
+  scheduledAt?: admin.firestore.Timestamp | null;
+  archivedAt?: admin.firestore.Timestamp | null;
   status: PostStatus;
   meta: MetaAPI;
 }
@@ -77,6 +78,6 @@ export interface MetaAPI {
   description?: string;
   image?: string;
   imageAlt?: string;
-  publishedAt?: admin.firestore.Timestamp;
-  updatedAt?: admin.firestore.Timestamp;
+  publishedAt?: admin.firestore.Timestamp | null;
+  updatedAt?: admin.firestore.Timestamp | null;
 }

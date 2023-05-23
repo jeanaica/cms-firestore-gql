@@ -56,15 +56,29 @@ export const updatePost = async (
   return {
     ...updatedPost,
     id: args.id,
-    createdAt: updatedPost?.createdAt?.toMillis(),
-    updatedAt: updatedPost?.updatedAt?.toMillis(),
-    publishedAt: updatedPost?.publishedAt?.toMillis(),
-    scheduledAt: updatedPost?.scheduledAt?.toMillis(),
-    archivedAt: updatedPost?.archivedAt?.toMillis(),
+    createdAt: updatedPost?.createdAt?.toMillis
+      ? updatedPost.createdAt.toMillis()
+      : null,
+    updatedAt: updatedPost?.updatedAt?.toMillis
+      ? updatedPost.updatedAt.toMillis()
+      : null,
+    publishedAt: updatedPost?.publishedAt?.toMillis
+      ? updatedPost.publishedAt.toMillis()
+      : null,
+    scheduledAt: updatedPost?.scheduledAt?.toMillis
+      ? updatedPost.scheduledAt.toMillis()
+      : null,
+    archivedAt: updatedPost?.archivedAt?.toMillis
+      ? updatedPost.archivedAt.toMillis()
+      : null,
     meta: {
       ...updatedPost?.meta,
-      updatedAt: updatedPost?.meta?.updatedAt?.toMillis(),
-      publishedAt: updatedPost?.meta?.publishedAt?.toMillis(),
+      updatedAt: updatedPost?.meta?.updatedAt?.toMillis
+        ? updatedPost.meta.updatedAt.toMillis()
+        : null,
+      publishedAt: updatedPost?.meta?.publishedAt?.toMillis
+        ? updatedPost.meta.publishedAt.toMillis()
+        : null,
     },
   };
 };

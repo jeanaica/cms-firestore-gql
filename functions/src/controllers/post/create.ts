@@ -6,29 +6,27 @@ import { Post, PostAPI, PostInput, PostStatus } from '../../types/post';
 import { db } from '../../utils/firebase';
 import toFirebaseTimestamp from '../../utils/toFirebaseTimestamp';
 
-const setPublishedAt = ({
+const setTimestamps = ({
   status,
-  value,
+  publishedAt,
+  scheduledAt,
 }: {
   status: PostStatus;
-  value: string | Timestamp;
+  publishedAt: string | Timestamp;
+  scheduledAt?: string | null;
 }) => {
-  switch (status.toUpperCase()) {
-    case 'DRAFT':
-      return null;
+  let newPublishedAt = null;
+  let newScheduledAt = null;
 
-    case 'PUBLISHED':
-      return value;
-
-    case 'SCHEDULED':
-      return toFirebaseTimestamp(value as string);
-
-    case 'ARCHIVED':
-      return null;
-
-    default:
-      return null;
+  if (status.toUpperCase() === 'PUBLISHED') {
+    newPublishedAt = publishedAt;
   }
+
+  if (status.toUpperCase() === 'SCHEDULED' && scheduledAt) {
+    newScheduledAt = toFirebaseTimestamp(scheduledAt);
+  }
+
+  return { newPublishedAt, newScheduledAt };
 };
 
 export const createPost = async (
@@ -58,10 +56,12 @@ export const createPost = async (
 
   const now = Timestamp.now();
 
-  const publishedTime = setPublishedAt({
+  const { newPublishedAt, newScheduledAt } = setTimestamps({
     status,
-    value: scheduledAt ? scheduledAt : now,
+    publishedAt: now,
+    scheduledAt: scheduledAt,
   });
+
   let cleanContent = '';
 
   if (content) {
@@ -83,12 +83,13 @@ export const createPost = async (
       title,
       keywords: tags?.map(tag => tag.value),
       updatedAt: now,
-      publishedAt: publishedTime,
+      publishedAt: newPublishedAt,
     },
     status,
     createdAt: now,
     updatedAt: now,
-    publishedAt: publishedTime,
+    publishedAt: newPublishedAt,
+    scheduledAt: newScheduledAt,
   };
   const postRef = await db().collection('posts').add(newPost);
   const postDoc = await postRef.get();
@@ -98,15 +99,29 @@ export const createPost = async (
 
   return {
     ...postData,
-    createdAt: postData?.createdAt?.toMillis(),
-    updatedAt: postData?.updatedAt?.toMillis(),
-    publishedAt: postData?.publishedAt?.toMillis(),
-    scheduledAt: postData?.scheduledAt?.toMillis(),
-    archivedAt: postData?.archivedAt?.toMillis(),
+    createdAt: postData?.createdAt?.toMillis
+      ? postData.createdAt.toMillis()
+      : null,
+    updatedAt: postData?.updatedAt?.toMillis
+      ? postData.updatedAt.toMillis()
+      : null,
+    publishedAt: postData?.publishedAt?.toMillis
+      ? postData.publishedAt.toMillis()
+      : null,
+    scheduledAt: postData?.scheduledAt?.toMillis
+      ? postData.scheduledAt.toMillis()
+      : null,
+    archivedAt: postData?.archivedAt?.toMillis
+      ? postData.archivedAt.toMillis()
+      : null,
     meta: {
       ...postData?.meta,
-      updatedAt: postData?.meta?.updatedAt?.toMillis(),
-      publishedAt: postData?.meta?.publishedAt?.toMillis(),
+      updatedAt: postData?.updatedAt?.toMillis
+        ? postData.updatedAt.toMillis()
+        : null,
+      publishedAt: postData?.publishedAt?.toMillis
+        ? postData.publishedAt.toMillis()
+        : null,
     },
   } as Post;
 };

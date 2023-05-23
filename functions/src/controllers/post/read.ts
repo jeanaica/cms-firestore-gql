@@ -24,23 +24,38 @@ export const posts = async (
 
   const snapshot = await query.get();
 
-  return snapshot.docs.map(
-    doc =>
-      ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data()?.createdAt?.toMillis(),
-        updatedAt: doc.data()?.updatedAt?.toMillis(),
-        publishedAt: doc.data()?.publishedAt?.toMillis(),
-        scheduledAt: doc.data()?.scheduledAt?.toMillis(),
-        archivedAt: doc.data()?.archivedAt?.toMillis(),
-        meta: {
-          ...doc.data()?.meta,
-          updatedAt: doc.data()?.meta?.updatedAt?.toMillis(),
-          publishedAt: doc.data()?.meta?.publishedAt?.toMillis(),
-        },
-      } as Post)
-  );
+  return snapshot.docs.map(doc => {
+    const docData = doc.data();
+
+    return {
+      id: doc.id,
+      ...doc.data(),
+      createdAt: docData?.createdAt?.toMillis
+        ? docData.createdAt.toMillis()
+        : null,
+      updatedAt: docData?.updatedAt?.toMillis
+        ? docData.updatedAt.toMillis()
+        : null,
+      publishedAt: docData?.publishedAt?.toMillis
+        ? docData.publishedAt.toMillis()
+        : null,
+      scheduledAt: docData?.scheduledAt?.toMillis
+        ? docData.scheduledAt.toMillis()
+        : null,
+      archivedAt: docData?.archivedAt?.toMillis
+        ? docData.archivedAt.toMillis()
+        : null,
+      meta: {
+        ...docData?.meta,
+        updatedAt: docData?.meta?.updatedAt?.toMillis
+          ? docData.meta.updatedAt.toMillis()
+          : null,
+        publishedAt: docData?.meta?.publishedAt?.toMillis
+          ? docData.meta.publishedAt.toMillis()
+          : null,
+      },
+    } as Post;
+  });
 };
 
 export const post = async (
@@ -55,15 +70,25 @@ export const post = async (
   if (postDoc.exists) {
     return {
       ...post,
-      createdAt: post?.createdAt?.toMillis(),
-      updatedAt: post?.updatedAt?.toMillis(),
-      publishedAt: post?.publishedAt?.toMillis(),
-      scheduledAt: post?.scheduledAt?.toMillis(),
-      archivedAt: post?.archivedAt?.toMillis(),
+      createdAt: post?.createdAt?.toMillis ? post.createdAt.toMillis() : null,
+      updatedAt: post?.updatedAt?.toMillis ? post.updatedAt.toMillis() : null,
+      publishedAt: post?.publishedAt?.toMillis
+        ? post.publishedAt.toMillis()
+        : null,
+      scheduledAt: post?.scheduledAt?.toMillis
+        ? post.scheduledAt.toMillis()
+        : null,
+      archivedAt: post?.archivedAt?.toMillis
+        ? post.archivedAt.toMillis()
+        : null,
       meta: {
         ...post?.meta,
-        updatedAt: post?.meta?.updatedAt?.toMillis(),
-        publishedAt: post?.meta?.publishedAt?.toMillis(),
+        updatedAt: post?.meta?.updatedAt?.toMillis
+          ? post.meta.updatedAt.toMillis()
+          : null,
+        publishedAt: post?.meta?.publishedAt?.toMillis
+          ? post.meta.publishedAt.toMillis()
+          : null,
       },
     } as Post;
   } else {
@@ -92,15 +117,21 @@ export const postSlug = async (
 
   return {
     ...post,
-    createdAt: post?.createdAt?.toMillis(),
-    updatedAt: post?.updatedAt?.toMillis(),
-    publishedAt: post?.publishedAt?.toMillis(),
-    scheduledAt: post?.scheduledAt?.toMillis(),
-    archivedAt: post?.archivedAt?.toMillis(),
+    createdAt: post?.createdAt?.toMillis ? post.createdAt.toMillis() : null,
+    updatedAt: post?.updatedAt?.toMillis ? post.updatedAt.toMillis() : null,
+    publishedAt: post?.publishedAt?.toMillis
+      ? post.publishedAt.toMillis()
+      : null,
+    scheduledAt: post?.scheduledAt?.toMillis
+      ? post.scheduledAt.toMillis()
+      : null,
+    archivedAt: post?.archivedAt?.toMillis ? post.archivedAt.toMillis() : null,
     meta: {
       ...post?.meta,
-      updatedAt: post?.meta?.updatedAt?.toMillis(),
-      publishedAt: post?.meta?.publishedAt?.toMillis(),
+      updatedAt: post?.updatedAt?.toMillis ? post.updatedAt.toMillis() : null,
+      publishedAt: post?.publishedAt?.toMillis
+        ? post.publishedAt.toMillis()
+        : null,
     },
   } as Post;
 };
