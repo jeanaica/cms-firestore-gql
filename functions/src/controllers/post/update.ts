@@ -1,9 +1,11 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { GraphQLError } from 'graphql';
 import DOMPurify from 'isomorphic-dompurify';
+import { logger } from 'firebase-functions/v1';
 
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
+import { timeValue } from './helper';
 
 export const updatePost = async (
   _: unknown,
@@ -18,12 +20,26 @@ export const updatePost = async (
     });
   }
 
+  const now = Timestamp.now();
   const postDoc = db().collection('posts').doc(args.id);
   const postData = args.post;
   const savedPost = (await postDoc.get()).data();
-  const publishedTime = savedPost?.publishedAt
-    ? savedPost?.publishedAt
-    : Timestamp.now();
+  // Fetching the current status of the post
+  const currentStatus = savedPost?.status;
+
+  // Determine firstPublishedAt timestamp
+  let firstPublishedAt;
+  if (
+    args.post.status === 'PUBLISHED' &&
+    currentStatus !== 'PUBLISHED' &&
+    !savedPost?.firstPublishedAt
+  ) {
+    firstPublishedAt = now;
+  } else {
+    firstPublishedAt = savedPost?.firstPublishedAt;
+  }
+
+  const publishedTime = savedPost?.publishedAt ? savedPost?.publishedAt : now;
   let cleanContent = savedPost?.content || '';
 
   if (args?.post.content) {
@@ -47,8 +63,9 @@ export const updatePost = async (
     ...postData,
     content: cleanContent,
     publishedAt: publishedTime,
+    firstPublishedAt,
+    updatedAt: now,
     meta,
-    updatedAt: Timestamp.now(),
   });
 
   const updatedPost = (await postDoc.get()).data() as PostAPI;
@@ -56,29 +73,47 @@ export const updatePost = async (
   return {
     ...updatedPost,
     id: args.id,
-    createdAt: updatedPost?.createdAt?.toMillis
-      ? updatedPost.createdAt.toMillis()
-      : null,
-    updatedAt: updatedPost?.updatedAt?.toMillis
-      ? updatedPost.updatedAt.toMillis()
-      : null,
-    publishedAt: updatedPost?.publishedAt?.toMillis
-      ? updatedPost.publishedAt.toMillis()
-      : null,
-    scheduledAt: updatedPost?.scheduledAt?.toMillis
-      ? updatedPost.scheduledAt.toMillis()
-      : null,
-    archivedAt: updatedPost?.archivedAt?.toMillis
-      ? updatedPost.archivedAt.toMillis()
-      : null,
+    createdAt: timeValue(updatedPost?.createdAt),
+    updatedAt: timeValue(updatedPost?.updatedAt),
+    publishedAt: timeValue(updatedPost?.publishedAt),
+    scheduledAt: timeValue(updatedPost?.scheduledAt),
+    archivedAt: timeValue(updatedPost?.archivedAt),
     meta: {
       ...updatedPost?.meta,
-      updatedAt: updatedPost?.meta?.updatedAt?.toMillis
-        ? updatedPost.meta.updatedAt.toMillis()
-        : null,
-      publishedAt: updatedPost?.meta?.publishedAt?.toMillis
-        ? updatedPost.meta.publishedAt.toMillis()
-        : null,
+      updatedAt: timeValue(updatedPost?.meta?.updatedAt),
+      publishedAt: timeValue(updatedPost?.meta?.publishedAt),
     },
   };
+};
+
+export const publishScheduledPost = async ({
+  id,
+}: {
+  id: string;
+}): Promise<void> => {
+  const postDoc = db().collection('posts').doc(id);
+  const savedPost = (await postDoc.get()).data();
+  const now = Timestamp.now();
+  const meta = {
+    ...savedPost?.meta,
+    publishedAt: now,
+    updatedAt: now,
+  };
+
+  try {
+    await postDoc.update({
+      ...savedPost,
+      meta,
+      scheduledAt: null,
+      publishedAt: now,
+      updatedAt: now,
+      firstPublishedAt: now,
+      status: 'PUBLISHED',
+    });
+    logger.log(`SUCCESS: ${id} posted`);
+  } catch (error) {
+    logger.warn('ERROR: ', error);
+  }
+
+  return;
 };

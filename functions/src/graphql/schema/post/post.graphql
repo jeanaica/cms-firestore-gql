@@ -12,6 +12,7 @@ type Post {
   caption: String
   publishedAt: Date
   scheduledAt: Date
+  firstPublishedAt: Date
   meta: Meta!
   status: PostStatus!
 }

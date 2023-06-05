@@ -13,6 +13,7 @@ export interface Post {
   category: Array<Option>;
   tags: Array<Option>;
   publishedAt?: number | Timestamp | null;
+  firstPublishedAt?: number | Timestamp | null;
   scheduledAt?: number | Timestamp | null;
   archivedAt?: number | Timestamp | null;
   status: PostStatus;
@@ -64,6 +65,7 @@ export interface PostAPI {
   category: Array<Option>;
   tags: Array<Option>;
   publishedAt?: admin.firestore.Timestamp | null;
+  firstPublishedAt?: admin.firestore.Timestamp | null;
   scheduledAt?: admin.firestore.Timestamp | null;
   archivedAt?: admin.firestore.Timestamp | null;
   status: PostStatus;

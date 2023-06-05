@@ -2,32 +2,9 @@ import { GraphQLError } from 'graphql';
 import { Timestamp } from 'firebase-admin/firestore';
 import DOMPurify from 'isomorphic-dompurify';
 
-import { Post, PostAPI, PostInput, PostStatus } from '../../types/post';
+import { Post, PostAPI, PostInput } from '../../types/post';
 import { db } from '../../utils/firebase';
-import toFirebaseTimestamp from '../../utils/toFirebaseTimestamp';
-
-const setTimestamps = ({
-  status,
-  publishedAt,
-  scheduledAt,
-}: {
-  status: PostStatus;
-  publishedAt: string | Timestamp;
-  scheduledAt?: string | null;
-}) => {
-  let newPublishedAt = null;
-  let newScheduledAt = null;
-
-  if (status.toUpperCase() === 'PUBLISHED') {
-    newPublishedAt = publishedAt;
-  }
-
-  if (status.toUpperCase() === 'SCHEDULED' && scheduledAt) {
-    newScheduledAt = toFirebaseTimestamp(scheduledAt);
-  }
-
-  return { newPublishedAt, newScheduledAt };
-};
+import { setTimestamps } from './helper';
 
 export const createPost = async (
   _: unknown,
@@ -89,6 +66,7 @@ export const createPost = async (
     createdAt: now,
     updatedAt: now,
     publishedAt: newPublishedAt,
+    firstPublishedAt: newPublishedAt,
     scheduledAt: newScheduledAt,
   };
   const postRef = await db().collection('posts').add(newPost);

@@ -1,6 +1,7 @@
 import { OrderByDirection } from 'firebase-admin/firestore';
 import { Post, PostAPI } from '../../types/post';
 import { db } from '../../utils/firebase';
+import { timeValue } from './helper';
 
 export const posts = async (
   _: unknown,
@@ -29,30 +30,17 @@ export const posts = async (
 
     return {
       id: doc.id,
-      ...doc.data(),
-      createdAt: docData?.createdAt?.toMillis
-        ? docData.createdAt.toMillis()
-        : null,
-      updatedAt: docData?.updatedAt?.toMillis
-        ? docData.updatedAt.toMillis()
-        : null,
-      publishedAt: docData?.publishedAt?.toMillis
-        ? docData.publishedAt.toMillis()
-        : null,
-      scheduledAt: docData?.scheduledAt?.toMillis
-        ? docData.scheduledAt.toMillis()
-        : null,
-      archivedAt: docData?.archivedAt?.toMillis
-        ? docData.archivedAt.toMillis()
-        : null,
+      ...docData,
+      createdAt: timeValue(docData?.createdAt),
+      updatedAt: timeValue(docData?.updatedAt),
+      publishedAt: timeValue(docData?.publishedAt),
+      firstPublishedAt: timeValue(docData?.firstPublishedAt),
+      scheduledAt: timeValue(docData?.scheduledAt),
+      archivedAt: timeValue(docData?.archivedAt),
       meta: {
         ...docData?.meta,
-        updatedAt: docData?.meta?.updatedAt?.toMillis
-          ? docData.meta.updatedAt.toMillis()
-          : null,
-        publishedAt: docData?.meta?.publishedAt?.toMillis
-          ? docData.meta.publishedAt.toMillis()
-          : null,
+        updatedAt: timeValue(docData?.meta?.updatedAt),
+        publishedAt: timeValue(docData?.meta?.publishedAt),
       },
     } as Post;
   });
@@ -70,25 +58,16 @@ export const post = async (
   if (postDoc.exists) {
     return {
       ...post,
-      createdAt: post?.createdAt?.toMillis ? post.createdAt.toMillis() : null,
-      updatedAt: post?.updatedAt?.toMillis ? post.updatedAt.toMillis() : null,
-      publishedAt: post?.publishedAt?.toMillis
-        ? post.publishedAt.toMillis()
-        : null,
-      scheduledAt: post?.scheduledAt?.toMillis
-        ? post.scheduledAt.toMillis()
-        : null,
-      archivedAt: post?.archivedAt?.toMillis
-        ? post.archivedAt.toMillis()
-        : null,
+      createdAt: timeValue(post?.createdAt),
+      updatedAt: timeValue(post?.updatedAt),
+      publishedAt: timeValue(post?.publishedAt),
+      firstPublishedAt: timeValue(post?.firstPublishedAt),
+      scheduledAt: timeValue(post?.scheduledAt),
+      archivedAt: timeValue(post?.archivedAt),
       meta: {
         ...post?.meta,
-        updatedAt: post?.meta?.updatedAt?.toMillis
-          ? post.meta.updatedAt.toMillis()
-          : null,
-        publishedAt: post?.meta?.publishedAt?.toMillis
-          ? post.meta.publishedAt.toMillis()
-          : null,
+        updatedAt: timeValue(post?.meta?.updatedAt),
+        publishedAt: timeValue(post?.meta?.publishedAt),
       },
     } as Post;
   } else {
@@ -117,21 +96,38 @@ export const postSlug = async (
 
   return {
     ...post,
-    createdAt: post?.createdAt?.toMillis ? post.createdAt.toMillis() : null,
-    updatedAt: post?.updatedAt?.toMillis ? post.updatedAt.toMillis() : null,
-    publishedAt: post?.publishedAt?.toMillis
-      ? post.publishedAt.toMillis()
-      : null,
-    scheduledAt: post?.scheduledAt?.toMillis
-      ? post.scheduledAt.toMillis()
-      : null,
-    archivedAt: post?.archivedAt?.toMillis ? post.archivedAt.toMillis() : null,
+    createdAt: timeValue(post?.createdAt),
+    updatedAt: timeValue(post?.updatedAt),
+    publishedAt: timeValue(post?.publishedAt),
+    firstPublishedAt: timeValue(post?.firstPublishedAt),
+    scheduledAt: timeValue(post?.scheduledAt),
+    archivedAt: timeValue(post?.archivedAt),
     meta: {
       ...post?.meta,
-      updatedAt: post?.updatedAt?.toMillis ? post.updatedAt.toMillis() : null,
-      publishedAt: post?.publishedAt?.toMillis
-        ? post.publishedAt.toMillis()
-        : null,
+      updatedAt: timeValue(post?.meta?.updatedAt),
+      publishedAt: timeValue(post?.meta?.publishedAt),
     },
   } as Post;
+};
+
+export const scheduledPosts = async (): Promise<Post[]> => {
+  const collection = db().collection('posts');
+
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
+  const query = collection
+    .where('status', '==', 'SCHEDULED')
+    .where('scheduledAt', '>=', startOfToday)
+    .where('scheduledAt', '<=', endOfToday);
+
+  const snapshot = await query.get();
+
+  return snapshot.docs.map(doc => {
+    return {
+      id: doc.id,
+    } as Post;
+  });
 };
