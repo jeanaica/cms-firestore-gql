@@ -16,7 +16,7 @@ exports.scheduledPost = functions
     try {
       const posts = await scheduledPosts();
 
-      posts.forEach(async val => await publishScheduledPost({ id: val.id }));
+      await Promise.all(posts.map(val => publishScheduledPost({ id: val.id })));
 
       functions.logger.info('Posts Updated!');
     } catch (error) {
