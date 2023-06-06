@@ -1,0 +1,33 @@
+name: Lint
+
+env:
+  NODE_VERSION: 18
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          cd functions
+          npm ci
+
+      - name: Run ESLint
+        run: |
+          cd functions
+          npm run lint
