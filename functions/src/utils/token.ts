@@ -19,7 +19,7 @@ export async function getUserIdFromGraphqlAuth(
     if (token === null) {
       return null;
     }
-    const payload = await auth().verifyIdToken(token);
+    const payload = await auth.verifyIdToken(token);
 
     return payload.uid;
   } catch (err) {

@@ -6,16 +6,11 @@ import { Storage } from 'firebase-admin/lib/storage/storage';
 import * as serviceAccount from './serviceAccountKey.json';
 import * as stagingServiceAccount from './stagingServiceAccountKey.json';
 
-let dbInstance: admin.firestore.Firestore | null = null;
-let authInstance: Auth | null = null;
-let storageInstance: Storage | null = null;
-
-function getAdmin() {
-  const selectedServiceAccount =
-    functions.config().config.env === 'production'
-      ? serviceAccount
-      : stagingServiceAccount;
-
+function getAdmin(selectedServiceAccount: unknown): {
+  db: admin.firestore.Firestore;
+  auth: Auth;
+  dbStorage: Storage;
+} {
   admin.initializeApp({
     credential: admin.credential.cert(
       selectedServiceAccount as admin.ServiceAccount
@@ -26,15 +21,17 @@ function getAdmin() {
     storageBucket: functions.config().config.storage_bucket,
   });
 
-  dbInstance = admin.firestore();
-  authInstance = admin.auth();
-  storageInstance = admin.storage();
+  const dbInstance = admin.firestore();
+  const authInstance = admin.auth();
+  const storageInstance = admin.storage();
 
   dbInstance.settings({ ignoreUndefinedProperties: true });
 
   return { db: dbInstance, auth: authInstance, dbStorage: storageInstance };
 }
 
-export const db = (): admin.firestore.Firestore => dbInstance || getAdmin().db;
-export const auth = (): Auth => authInstance || getAdmin().auth;
-export const dbStorage = (): Storage => storageInstance || getAdmin().dbStorage;
+export const { db, auth, dbStorage } = getAdmin(
+  functions.config().config.env === 'production'
+    ? serviceAccount
+    : stagingServiceAccount
+);

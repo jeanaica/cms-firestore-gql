@@ -4,7 +4,7 @@ import toTitleCase from '../../utils/toTitleCase';
 
 export const categories = async (): Promise<Category[]> => {
   try {
-    const categoriesSnapshot = await db().collection('categories').get();
+    const categoriesSnapshot = await db.collection('categories').get();
 
     return categoriesSnapshot.docs.map(doc => ({
       id: doc.id,

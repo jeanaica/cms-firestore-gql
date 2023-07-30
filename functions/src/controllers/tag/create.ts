@@ -19,7 +19,7 @@ export const createTag = async (
   }
 
   try {
-    const tagRef = db().collection('tags');
+    const tagRef = db.collection('tags');
     const upperCaseTag = args.tag.toUpperCase();
 
     const existingTagSnapshot = await tagRef

@@ -20,13 +20,13 @@ export const createCategory = async (
 
   try {
     const upperCaseCategory = args.category.toUpperCase();
-    const categoryRef = db().collection('categories');
+    const categoryRef = db.collection('categories');
 
     const existingCategorySnapshot = await categoryRef
       .where(FieldPath.documentId(), '==', upperCaseCategory)
       .get();
 
-    const tagRef = db().collection('tags');
+    const tagRef = db.collection('tags');
     const existingTagSnapshot = await tagRef
       .where(FieldPath.documentId(), '==', upperCaseCategory)
       .get();

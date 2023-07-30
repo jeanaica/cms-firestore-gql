@@ -26,17 +26,15 @@ const uploadFileToStorage = async (
   const uniqueFilename = `${new Date().getTime()}-${file.name}`;
   const filePath = `${folder}/${uniqueFilename}`;
 
-  const uploadResp = await dbStorage()
-    .bucket()
-    .upload(file.path, {
-      destination: filePath,
-      contentType: file.type,
+  const uploadResp = await dbStorage.bucket().upload(file.path, {
+    destination: filePath,
+    contentType: file.type,
+    metadata: {
       metadata: {
-        metadata: {
-          firebaseStorageDownloadTokens: uuidToken,
-        },
+        firebaseStorageDownloadTokens: uuidToken,
       },
-    });
+    },
+  });
 
   return uploadResp;
 };
