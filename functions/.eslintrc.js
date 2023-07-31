@@ -29,6 +29,10 @@ module.exports = {
     quotes: ['error', 'single'],
     'quote-props': ['error', 'as-needed'],
     'import/no-unresolved': 0,
+    '@typescript-eslint/no-inferrable-types': [
+      'error',
+      { ignoreParameters: true },
+    ],
     '@typescript-eslint/no-var-requires': 'off',
     'require-jsdoc': [
       'error',

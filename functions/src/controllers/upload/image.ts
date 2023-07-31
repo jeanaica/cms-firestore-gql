@@ -4,7 +4,11 @@ import { UploadResponse } from '@google-cloud/storage';
 import uuid from 'uuid-v4';
 
 import { dbStorage } from '../../utils/firebase';
-import { imageFileTypes } from '../../constants/fileTypes';
+import { verifyFile } from '../../utils/fileUtils';
+import { handleErrorResponse } from '../../utils/errorHandler';
+import { handleSuccessResponse } from '../../utils/successHandler';
+import { SuccessMessages } from '../../constants/successMessages';
+import { MAXIMUM_IMG_SIZE } from '../../constants/fileSpecifications';
 
 const parseForm = (req: Request): Promise<{ fields: Fields; files: Files }> => {
   return new Promise((resolve, reject) => {
@@ -62,28 +66,23 @@ const uploadImageFile = async (req: Request, res: Response): Promise<void> => {
     const file = files.file;
     const { folder } = fields;
 
-    if (!file || !imageFileTypes.includes(file.type)) {
-      throw new Error('no file to upload, please choose a file.');
-    }
+    verifyFile(file, MAXIMUM_IMG_SIZE);
 
     const uploadResp = await uploadFileToStorage(file, folder, uuidToken);
     const downloadUrl = generateDownloadUrl(uploadResp, uuidToken);
 
-    res.status(200).json({ fileInfo: uploadResp[0].metadata, downloadUrl });
+    handleSuccessResponse(res, {
+      data: {
+        fileInfo: uploadResp[0].metadata,
+        downloadUrl,
+      },
+      message: SuccessMessages.FILE_UPLOADED_SUCCESSFULLY,
+    });
+
+    return;
   } catch (err) {
-    if (err instanceof Error) {
-      if (err.message === 'no file to upload, please choose a file.') {
-        res
-          .status(400)
-          .json({ error: 'No file to upload or file type is invalid' });
-      } else {
-        res
-          .status(500)
-          .json({ error: 'An error occurred while uploading the file' });
-      }
-    } else {
-      res.status(500).json({ error: 'An unexpected error occurred' });
-    }
+    handleErrorResponse(err, res);
+    return;
   }
 };
 

@@ -3,6 +3,7 @@ declare module 'formidable-serverless' {
     type: string;
     name: string;
     path: string;
+    size: number;
   }
 
   export interface Fields {
