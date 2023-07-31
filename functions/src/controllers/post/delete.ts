@@ -16,7 +16,7 @@ export const deletePost = async (
     });
   }
 
-  const postRef = db().collection('posts').doc(args.id);
+  const postRef = db.collection('posts').doc(args.id);
 
   await postRef.update({
     updatedAt: Timestamp.now(),

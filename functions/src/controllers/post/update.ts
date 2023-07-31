@@ -21,7 +21,7 @@ export const updatePost = async (
   }
 
   const now = Timestamp.now();
-  const postDoc = db().collection('posts').doc(args.id);
+  const postDoc = db.collection('posts').doc(args.id);
   const postData = args.post;
   const savedPost = (await postDoc.get()).data();
   // Fetching the current status of the post
@@ -92,7 +92,7 @@ export const publishScheduledPost = async ({
 }: {
   id: string;
 }): Promise<void> => {
-  const postDoc = db().collection('posts').doc(id);
+  const postDoc = db.collection('posts').doc(id);
   const savedPost = (await postDoc.get()).data();
   const now = Timestamp.now();
   const meta = {

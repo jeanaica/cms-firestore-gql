@@ -13,7 +13,7 @@ authApp.use(cors({ origin: true }));
 authApp.post('/createTestTokenForUser', async (req: Request, res: Response) => {
   const { uid } = req.body;
   try {
-    const token = await auth().createCustomToken(uid);
+    const token = await auth.createCustomToken(uid);
     const authResult = await axios.post(
       `http://localhost:9099/www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${
         functions.config().config.token
@@ -29,11 +29,12 @@ authApp.post('/createTestTokenForUser', async (req: Request, res: Response) => {
       refreshToken: authResult.data.refreshToken,
       expiresIn: authResult.data.expiresIn,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    res.json({
-      error: err.message,
-    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.json({
+        error: err.message,
+      });
+    }
   }
   return;
 });
